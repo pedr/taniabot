@@ -6,8 +6,6 @@ const TelegramBot = require('node-telegram-bot-api');
 const port = process.env.PORT || 5000;
 const host = process.env.HOST;
 
-bot.setWebHook(/* here should go the url, right? */);
-
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, webHook : { port : port, host : host }});
 const PLAYLISTS = {};
