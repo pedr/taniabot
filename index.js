@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 const host = process.env.HOST;
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, webHook : { port : port, host : host });
+const bot = new TelegramBot(token, webHook : { port });
 const PLAYLISTS = {};
 
 bot.on('message', (msg) => {
