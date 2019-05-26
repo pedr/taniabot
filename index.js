@@ -9,7 +9,7 @@ const host = process.env.HOST;
 const externalUrl = process.env.EXTERNAL_URL;
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, { webHook: { port, host }, polling : true });
+const bot = new TelegramBot(token, { webHook: { port, host } });
 bot.setWebHook(externalUrl + ':443/bot' + token);
 const PLAYLISTS = {};
 
