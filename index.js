@@ -32,7 +32,7 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
   bot.sendMessage(chatId, resp);
 });
 
-bot.onText(/\/hxh/, (msg, match) => {
+bot.onText(/\/hxh$/, (msg, match) => {
 
   const chatId = msg.chat.id;
 
@@ -47,6 +47,13 @@ bot.onText(/\/hxh/, (msg, match) => {
   bot.sendMessage(chatId, neverForget);
 
 });
+
+bot.onText(/\/cmds$/, (msg, match) => {
+  const commands = "/hxh, /synch, /synch_livre, /playlist";
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, commands);
+})
 
 bot.onText(/(https:\/\/www.youtube\.com\/watch\?v\=)|(https:\/\/youtu\.be\/)/,
   (msg, match) => {
@@ -76,7 +83,7 @@ bot.onText(/(https:\/\/www.youtube\.com\/watch\?v\=)|(https:\/\/youtu\.be\/)/,
     PLAYLISTS[chatId].videos.push(realId);
   });
 
-bot.onText(/\/playlist/, (msg, match) => {
+bot.onText(/\/playlist$/, (msg, match) => {
 
   const chatId = msg.chat.id;
 
@@ -98,7 +105,7 @@ bot.onText(/\/synch$/, (msg, match) => {
   bot.sendMessage(chatId, 'https://cytu.be/r/copao');
 })
 
-bot.onText(/\/synch_livre/, (msg, match) => {
+bot.onText(/\/synch_livre$/, (msg, match) => {
   const chatId = msg.chat.id;
 
   bot.sendMessage(chatId, 'http://cytu.be/r/copao_democratico');
