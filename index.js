@@ -9,8 +9,10 @@ const host = process.env.HOST;
 const externalUrl = process.env.EXTERNAL_URL;
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, { webHook: { port, host } });
-bot.setWebHook(externalUrl + ':443/bot' + token);
+//const bot = new TelegramBot(token, { webHook: { port, host } });
+//bot.setWebHook(externalUrl + ':443/bot' + token);
+const bot = new TelegramBot(token, { polling: true });
+
 const PLAYLISTS = {};
 
 bot.on('message', (msg) => {
@@ -89,3 +91,15 @@ bot.onText(/\/playlist/, (msg, match) => {
   bot.sendMessage(chatId, playlist(PLAYLISTS[chatId]));
 });
 
+
+bot.onText(/\/synch/, (msg, match) => {
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, 'https://cytu.be/r/copao');
+})
+
+bot.onText(/\/synch_livre/, (msg, match) => {
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, 'http://cytu.be/r/copao_democratico');
+})
