@@ -87,6 +87,8 @@ bot.onText(/\/playlist$/, (msg, match) => {
 
   const chatId = msg.chat.id;
 
+  console.log(PLAYLISTS);
+
   if (!PLAYLISTS[chatId]) {
     return;
   }
