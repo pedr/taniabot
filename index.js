@@ -92,7 +92,7 @@ bot.onText(/\/playlist/, (msg, match) => {
 });
 
 
-bot.onText(/\/synch/, (msg, match) => {
+bot.onText(/\/synch$/, (msg, match) => {
   const chatId = msg.chat.id;
 
   bot.sendMessage(chatId, 'https://cytu.be/r/copao');
