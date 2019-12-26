@@ -1,6 +1,15 @@
 
 const bot = require('./configs');
 
+const axiosLib = require('axios');
+
+const axios = axiosLib.create({
+  baseURL: "https://api.imgur.com/3/",  
+  headers: {
+    'Authorization': 'Client-ID a5236975b798a7c'
+  }
+})
+
 const PLAYLISTS = {};
 
 bot.on('message', (msg) => {
@@ -128,10 +137,6 @@ const bets = []
 //]
 bot.onText(/\/bet$/, (msg, match) => {
 
-  function randomIntFromInterval(min, max) { // min and max included 
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
   const chatId = msg.chat.id;
 
   let betsFromChat = bets.find(p => p.chatId == chatId)
@@ -182,3 +187,40 @@ bot.onText(/\/bet_result$/, (msg, match) => {
   betsFromChat.bets = []
   return bot.sendMessage(chatId, message);
 })
+
+bot.onText(/\/meme/, (msg, match) => {
+  const chatId = msg.chat.id;
+
+  return getRandomImage()
+    .then(({ title, link }) => {
+      return bot.sendMessage(chatId, `titulo: ${title}\n ${link}`)      
+    })
+    .catch(err => {
+      return bot.sendMessage(chatId, "algo deu errado")
+    })
+})
+
+function getRandomImage() {
+  return axios.get('/gallery/t/random/0')
+      .then(resp => {
+        const { data: { data} } = resp
+        const randomId = randomIntFromInterval(0, data.items.length)
+        const item = data.items[randomId]
+        const { title, is_album, link, images_count } = item
+        if (is_album) {
+          const randomId = randomIntFromInterval(0, item.images.length -1)
+          const image = item.images[randomId]
+          const { link } = image
+          return { title, link }
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
+}
+
+getRandomImage().then(r => console.log(r))
+
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
