@@ -37,33 +37,29 @@ bot.onText(/\/hxh$/, (msg, match) => {
 });
 
 bot.onText(/\/cmds$/, (msg, match) => {
-  const commands = "/hxh, /synch, /synch_livre, /playlist, /bet, /bet_result";
+  const commands = "/hxh, /synch, /synch_livre, /playlist, /bet, /bet_result, /ytb [link]";
   const chatId = msg.chat.id;
 
   bot.sendMessage(chatId, commands);
 })
 
-bot.onText(/(https:\/\/www.youtube\.com\/watch\?v\=)|(https:\/\/youtu\.be\/)/,
+bot.onText(/\/ytb (.+)/,
   (msg, match) => {
 
-    function newVideo(msg, match) {
-      const startMatch = msg.text.indexOf(match[0]);
-      const endMatch = startMatch + match[0].length;
-      const fromIdToEndOfLine = msg.text.slice(endMatch);
+    function newVideo(input) {
+      const ytbRegex = new RegExp(/([A-Z])\w+/);
+      const realId = input.match(ytbRegex);
 
-      // if there is no '&' should only be left with id
-      const realId = fromIdToEndOfLine.split('&')[0];
-
-      return realId;
+      return realId[0];
     }
 
     const chatId = msg.chat.id;
-    const realId = newVideo(msg, match);
+    const realId = newVideo(match[0]);
 
     if (!PLAYLISTS[chatId]) {
       PLAYLISTS[chatId] = {
-	chatId,
-	videos: [],
+        chatId,
+        videos: [],
       }
     }
 
@@ -74,8 +70,6 @@ bot.onText(/(https:\/\/www.youtube\.com\/watch\?v\=)|(https:\/\/youtu\.be\/)/,
 bot.onText(/\/playlist$/, (msg, match) => {
 
   const chatId = msg.chat.id;
-
-  console.log(PLAYLISTS);
 
   if (!PLAYLISTS[chatId]) {
     return;
@@ -102,6 +96,17 @@ bot.onText(/\/synch_livre$/, (msg, match) => {
 })
 
 const bets = []
+// bets = [
+//  { chatId: 10,
+//    bets: [
+//      {
+//        id,
+//        nick,
+//        value
+//      }
+//    ]
+//  }
+//]
 bot.onText(/\/bet$/, (msg, match) => {
 
   function randomIntFromInterval(min, max) { // min and max included 
@@ -109,16 +114,25 @@ bot.onText(/\/bet$/, (msg, match) => {
   }
 
   const chatId = msg.chat.id;
+
+  let betsFromChat = bets.find(p => p.chatId == chatId)
+
+  if (!betsFromChat) {
+    bets.push({
+      chatId,
+      bets: []
+    })
+    betsFromChat = bets[bets.length - 1]
+  }
   const user = msg.from.id
   const nick = msg.from.first_name;
 
-  const alreadyPlaying = bets.find(p => p.id == user && p.chatId == chatId)
+  const alreadyPlaying = betsFromChat.bets.find(b => b.id == user)
 
   if (!alreadyPlaying) {
-    bets.push({
+    betsFromChat.bets.push({
       id: user,
       nick,
-      chatId,
       value: randomIntFromInterval(1, 10)  
     })
     bot.sendMessage(chatId, 'sua aposta foi gerada, digite /bet_result para ver os resultados');
@@ -130,26 +144,22 @@ bot.onText(/\/bet$/, (msg, match) => {
 bot.onText(/\/bet_result$/, (msg, match) => {
   const chatId = msg.chat.id;
 
-  const betsFromChat = bets.filter( b => b.chatId == chatId).sort((a, b) => {
-    if (a.value > b.value) {
-      return 1;
-    }
-    
-    if (a.value < b.value) {
-      return -1;
-    }
-    
-    return 0;
-  })
+  const betsFromChat = bets.find( b => b.chatId == chatId);
 
-  if (betsFromChat.length < 2) {
+  if (!betsFromChat || (betsFromChat.bets ? betsFromChat.bets.length < 2 : true)) {
     return bot.sendMessage(chatId, "espere outra pessoa rodar o /bet");
   }
 
+  const orderedBets = betsFromChat.bets
+    .sort((a, b) => {
+      return b.value - a.value 
+    })
+
   let message = `O resultado dessa rodada foi:`
-  for (let i = 0; i < betsFromChat.length; i++) {
-    const bet = betsFromChat[i]
+  for (let i = 0; i < orderedBets.length; i++) {
+    const bet = orderedBets[i]
     message += `\n${i + 1} - ${bet.nick} - valor: ${bet.value}`
   }
+  betsFromChat.bets = []
   return bot.sendMessage(chatId, message);
 })
