@@ -1,19 +1,5 @@
 
-require('dotenv').config()
-
-// replace the value below with the Telegram token you receive from @BotFather
-const token = process.env.TOKEN;
-const port = process.env.PORT || 443;
-const host = process.env.HOST || '0.0.0.0';
-const externalUrl = process.env.EXTERNAL_URL;
-
-// Create a bot that uses 'polling' to fetch new updates
-//const bot = new TelegramBot(token, { webHook: { port, host } });
-//bot.setWebHook(externalUrl + ':443/bot' + token);
-var TelegramBot = require('node-telegram-bot-api')
-const bot = new TelegramBot(token, { webHook: { port : port, host : host } });
-
-bot.setWebHook(externalUrl + ':443/bot' + token);
+const bot = require('./configs');
 
 const PLAYLISTS = {};
 
@@ -51,7 +37,7 @@ bot.onText(/\/hxh$/, (msg, match) => {
 });
 
 bot.onText(/\/cmds$/, (msg, match) => {
-  const commands = "/hxh, /synch, /synch_livre, /playlist";
+  const commands = "/hxh, /synch, /synch_livre, /playlist, /bet, /bet_result";
   const chatId = msg.chat.id;
 
   bot.sendMessage(chatId, commands);
@@ -102,7 +88,7 @@ bot.onText(/\/playlist$/, (msg, match) => {
   bot.sendMessage(chatId, playlist(PLAYLISTS[chatId]));
 });
 
-/*
+
 bot.onText(/\/synch$/, (msg, match) => {
   const chatId = msg.chat.id;
 
@@ -114,4 +100,56 @@ bot.onText(/\/synch_livre$/, (msg, match) => {
 
   bot.sendMessage(chatId, 'http://cytu.be/r/copao_democratico');
 })
-*/
+
+const bets = []
+bot.onText(/\/bet$/, (msg, match) => {
+
+  function randomIntFromInterval(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  const chatId = msg.chat.id;
+  const user = msg.from.id
+  const nick = msg.from.first_name;
+
+  const alreadyPlaying = bets.find(p => p.id == user && p.chatId == chatId)
+
+  if (!alreadyPlaying) {
+    bets.push({
+      id: user,
+      nick,
+      chatId,
+      value: randomIntFromInterval(1, 10)  
+    })
+    bot.sendMessage(chatId, 'sua aposta foi gerada, digite /bet_result para ver os resultados');
+  } else {
+    bot.sendMessage(chatId, 'você já possui uma aposta nessa rodada')
+  }
+})
+
+bot.onText(/\/bet_result$/, (msg, match) => {
+  const chatId = msg.chat.id;
+
+  const betsFromChat = bets.filter( b => b.chatId == chatId).sort((a, b) => {
+    if (a.value > b.value) {
+      return 1;
+    }
+    
+    if (a.value < b.value) {
+      return -1;
+    }
+    
+    return 0;
+  })
+
+  if (betsFromChat.length < 2) {
+    return bot.sendMessage(chatId, "espere outra pessoa rodar o /bet");
+  }
+
+  let message = `O resultado dessa rodada foi:`
+  for (let i = 0; i < betsFromChat.length; i++) {
+    const bet = betsFromChat[i]
+    message += `\n${i + 1} - ${bet.nick} - valor: ${bet.value}`
+  }
+  return bot.sendMessage(chatId, message);
+})
