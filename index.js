@@ -193,7 +193,7 @@ bot.onText(/\/meme/, (msg, match) => {
 
   return getRandomImage()
     .then(({ title, link }) => {
-      return bot.sendMessage(chatId, `titulo: ${title}\n ${link}`)      
+      return bot.sendMessage(chatId, `titulo: ${title}\n${link}`)      
     })
     .catch(err => {
       return bot.sendMessage(chatId, "algo deu errado")
