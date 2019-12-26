@@ -47,14 +47,32 @@ bot.onText(/\/ytb (.+)/,
   (msg, match) => {
 
     function newVideo(input) {
-      const ytbRegex = new RegExp(/([A-Z])\w+/);
-      const realId = input.match(ytbRegex);
+      let cleanInput = input.includes('//') ? input.split('//')[1] : undefined
 
-      return realId[0];
+      if (!cleanInput) {
+        return undefined;
+      }
+      let id = "";
+      if (cleanInput.includes('youtube.com/watch?v=')) {
+     
+        id = input.split('?v=')[1]
+
+      } else if (cleanInput.includes('youtu.be/')) {
+        
+        id = input.split('youtu.be/')[1]
+      } else {
+
+        return undefined;
+      }
+
+      const a = id.includes(" ") ? id.split(" ")[0] : id
+      const b = a.includes("&") ? a.split("&")[0] : a
+
+      return b;
     }
 
     const chatId = msg.chat.id;
-    const realId = newVideo(match[0]);
+    const realId = newVideo(match[1]);
 
     if (!PLAYLISTS[chatId]) {
       PLAYLISTS[chatId] = {
@@ -63,8 +81,9 @@ bot.onText(/\/ytb (.+)/,
       }
     }
 
-
-    PLAYLISTS[chatId].videos.push(realId);
+    if (realId !== undefinded) {
+      PLAYLISTS[chatId].videos.push(realId);
+    }
   });
 
 bot.onText(/\/playlist$/, (msg, match) => {
