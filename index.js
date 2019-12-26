@@ -3,19 +3,16 @@ require('dotenv').config()
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TOKEN;
-const port = process.env.PORT;
-const host = process.env.HOST;
+const port = process.env.PORT || 443;
+const host = process.env.HOST || '0.0.0.0';
 const externalUrl = process.env.EXTERNAL_URL;
 
 // Create a bot that uses 'polling' to fetch new updates
 //const bot = new TelegramBot(token, { webHook: { port, host } });
 //bot.setWebHook(externalUrl + ':443/bot' + token);
-var TelegramBot = require('node-telegram-bot-api'),
-    port = process.env.PORT || 443,
-    host = '0.0.0.0',  // probably this change is not required
-    externalUrl = process.env.EXTERNAL_URL,
-    token = process.env.TOKEN,
-    bot = new TelegramBot(process.env.TOKEN, { webHook: { port : port, host : host } });
+var TelegramBot = require('node-telegram-bot-api')
+const bot = new TelegramBot(token, { webHook: { port : port, host : host } });
+
 bot.setWebHook(externalUrl + ':443/bot' + token);
 
 const PLAYLISTS = {};
