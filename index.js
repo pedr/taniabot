@@ -81,7 +81,7 @@ bot.onText(/\/ytb (.+)/,
       }
     }
 
-    if (realId !== undefinded) {
+    if (realId !== undefined) {
       PLAYLISTS[chatId].videos.push(realId);
     }
   });
