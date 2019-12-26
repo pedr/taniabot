@@ -100,7 +100,7 @@ bot.onText(/\/playlist$/, (msg, match) => {
   bot.sendMessage(chatId, playlist(PLAYLISTS[chatId]));
 });
 
-
+/*
 bot.onText(/\/synch$/, (msg, match) => {
   const chatId = msg.chat.id;
 
@@ -112,3 +112,4 @@ bot.onText(/\/synch_livre$/, (msg, match) => {
 
   bot.sendMessage(chatId, 'http://cytu.be/r/copao_democratico');
 })
+*/
