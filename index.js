@@ -1,6 +1,18 @@
 
 const bot = require('./configs');
 
+require('dotenv').config()
+
+const express = require('express');
+const app = express();
+
+//setting middleware
+app.use(express.static('public')); //Serves resources from public folder
+
+
+const server = app.listen(process.env.PORT);
+
+
 // const db = require('./database')
 
 const {
