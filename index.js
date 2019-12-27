@@ -284,7 +284,7 @@ function randomQuote(messages) {
 function formatQuote(message) {
   const { nick, quote, date } = message
   const formatDate = new Date(date * 1000);
-  const dateToString = `${formatDate.getDate()}/${formatDate.getMonth() + 1}/${formatDate.getFullYear()} ${formatDate.getHours() -1}:${formatDate.getMinutes()}`
+  const dateToString = `${formatDate.getDate()}/${formatDate.getMonth() + 1}/${formatDate.getFullYear()} ${formatDate.getHours()}:${formatDate.getMinutes()}`
   return `“${quote}”
   \t\t\t\t\t\t${nick} - ${dateToString}
   `
