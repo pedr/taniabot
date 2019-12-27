@@ -8,17 +8,17 @@ function randomQuoteFromUser(messages, userId) {
 
   const randomQuoteId = _randomIntFromInterval(0, filtered.length - 1)
 
-  return _formatQuote(filtered[randomQuoteId])
+  return formatQuote(filtered[randomQuoteId])
 }
 
 function randomQuote(messages) {
   const randomQuoteId = _randomIntFromInterval(0, messages.length - 1)
 
   console.log('asdfasfdadsf')
-  return _formatQuote(messages[randomQuoteId]);
+  return formatQuote(messages[randomQuoteId]);
 }
 
-function _formatQuote(message) {
+function formatQuote(message) {
   const { nick, quote, date } = message
   const formatDate = new Date(date * 1000);
   const dateToString = `${formatDate.getDate()}/${formatDate.getMonth() + 1}/${formatDate.getFullYear()} ${formatDate.getHours()}:${formatDate.getMinutes()}`
@@ -33,5 +33,6 @@ function _randomIntFromInterval(min, max) { // min and max included
 
 module.exports = {
   randomQuoteFromUser,
-  randomQuote
+  randomQuote,
+  formatQuote
 }

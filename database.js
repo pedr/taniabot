@@ -1,24 +1,24 @@
-require('dotenv').config()
-const MongoClient = require('mongodb').MongoClient;
+require("dotenv").config();
+const MongoClient = require("mongodb").MongoClient;
 
-const dbUrl = process.env.DB_URL
+const dbUrl = process.env.DB_URL;
 
 const client = new MongoClient(dbUrl, {
-    useNewUrlParser: true,
+  useNewUrlParser: true
 })
+  .connect()
 
-client.connect((err) => {
-    if (err) return console.error(err)
+const db = client.then(c => c.db('telegram_bot'))
 
-    const usersCollection = client.db("telegram_bot").collection("users");
-
-    usersCollection.find({}).each((err, doc) => {
-        if (err) return console.error(err)
-
-        console.log(doc)
-    });
-})
-
-const db = {}
-
-module.exports = db
+module.exports = {
+  getDb: function() {
+    return new Promise((resolve, reject) => {
+      return db.then(r => {
+        resolve(r)
+      })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+};

@@ -1,8 +1,11 @@
 
 const {
   randomQuoteFromUser,
-  randomQuote
+  randomQuote,
+  formatQuote
 } = require('./helpers')
+
+const quotesDao = require('../database/quotes')
 
 /*
 const quotes = [
@@ -34,38 +37,29 @@ function saveQuote(msg) {
     user: reply.from.id,
     nick: reply.from.first_name,
     quote: reply.text,
-    date: reply.date
+    date: reply.date,
+    chatId,
   }
 
-  let quotesFromChat = quotes.find(q => q.chatId == chatId)
-
-  if (!quotesFromChat) {
-    quotes.push({
-      chatId,
-      quotes: []
-    })
-    quotesFromChat = quotes[quotes.length - 1]
-  }
-
-  quotesFromChat.quotes.push(quote)
+  quotesDao.save(quote)
 }
 
 function getQuote(msg) {
   const chatId = msg.chat.id;
 
-  let quotesFromChat = quotes.find(q => q.chatId == chatId)
-
-  if (!quotesFromChat) {
-    return
-  }
-
   const { reply_to_message: reply } = msg
 
-  if (!reply) {
-    return randomQuote(quotesFromChat.quotes);
-  } else {
-    return randomQuoteFromUser(messages, userId);
+  const userId = reply.from ? reply.from.id : undefined
+
+  if (userId) {
+    return quotesDao.getRandomFromUser(chatId, userId).then(quote => {
+      return formatQuote(quote)
+    })
   }
+  
+  return quotesDao.getRandom(chatId).then(quote => {
+    return formatQuote(quote)
+  })
 }
 
 module.exports = {
