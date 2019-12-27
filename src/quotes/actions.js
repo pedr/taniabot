@@ -49,7 +49,7 @@ function getQuote(msg) {
 
   const { reply_to_message: reply } = msg
 
-  const userId = reply.from ? reply.from.id : undefined
+  const userId = reply ? (reply.from ? reply.from.id : undefined) : undefined
 
   if (userId) {
     return quotesDao.getRandomFromUser(chatId, userId).then(quote => {
