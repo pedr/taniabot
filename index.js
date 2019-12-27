@@ -199,6 +199,96 @@ bot.onText(/\/meme/, (msg, match) => {
       return bot.sendMessage(chatId, "algo deu errado")
     })
 })
+/*
+const quotes = [
+  { 
+    chatId: number,
+    quotes: [
+      {
+        user,
+        nick,
+        quote,
+        date
+      }
+    ]
+  }
+]
+*/
+const quotes = [];
+bot.onText(/\/quote$/, (msg) => {
+  const chatId = msg.chat.id;
+
+  const { reply_to_message: reply } = msg
+
+  if (!reply) {
+    return
+  }
+
+  const quote = {
+    user: reply.from.id,
+    nick: reply.from.first_name,
+    quote: reply.text,
+    date: reply.date
+  }
+
+  let quotesFromChat = quotes.find(q => q.chatId == chatId)
+
+  if (!quotesFromChat) {
+    quotes.push({
+      chatId,
+      quotes: []
+    })
+    quotesFromChat = quotes[quotes.length - 1]
+  }
+
+  quotesFromChat.quotes.push(quote)
+  return
+})
+
+bot.onText(/\/quotes$/, (msg) => {
+  const chatId = msg.chat.id;
+
+  let quotesFromChat = quotes.find(q => q.chatId == chatId)
+
+  if (!quotesFromChat) {
+    return
+  }
+
+  const { reply_to_message: reply } = msg
+
+  if (!reply) {
+    return bot.sendMessage(chatId, randomQuote(quotesFromChat.quotes));
+  } else {
+    return bot.sendMessage(chatId, randomQuoteFromUser(messages, userId));
+  }
+})
+
+function randomQuoteFromUser(messages, userId) {
+  const filtered = messages.filter(m => m.user == userId);
+
+  if (!filtered.length) {
+    return `usuario não possui nenhum quote memorável`;
+  }
+
+  const randomQuoteId = randomIntFromInterval(0, filtered.length - 1)
+
+  return formatQuote(filtered[randomQuoteId])
+}
+
+function randomQuote(messages) {
+  const randomQuoteId = randomIntFromInterval(0, messages.length - 1)
+
+  return formatQuote(messages[randomQuoteId]);
+}
+
+function formatQuote(message) {
+  const { nick, quote, date } = message
+  const formatDate = new Date(date * 1000);
+  const dateToString = `${formatDate.getDate()}/${formatDate.getMonth() + 1}/${formatDate.getFullYear()} ${formatDate.getHours() -1}:${formatDate.getMinutes()}`
+  return `“${quote}”
+  \t\t\t\t\t\t${nick} - ${dateToString}
+  `
+}
 
 function getRandomImage() {
   return axios.get('/gallery/t/random/0')
@@ -218,8 +308,6 @@ function getRandomImage() {
         console.error(err)
       })
 }
-
-getRandomImage().then(r => console.log(r))
 
 function randomIntFromInterval(min, max) { // min and max included 
   return Math.floor(Math.random() * (max - min + 1) + min);
