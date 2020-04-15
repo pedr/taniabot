@@ -1,38 +1,42 @@
-
 function randomQuoteFromUser(messages, userId) {
-  const filtered = messages.filter(m => m.user == userId);
+  const filtered = messages.filter((m) => m.user == userId);
 
   if (!filtered.length) {
     return `usuario não possui nenhum quote memorável`;
   }
 
-  const randomQuoteId = _randomIntFromInterval(0, filtered.length - 1)
+  const randomQuoteId = _randomIntFromInterval(0, filtered.length - 1);
 
-  return formatQuote(filtered[randomQuoteId])
+  return formatQuote(filtered[randomQuoteId]);
 }
 
 function randomQuote(messages) {
-  const randomQuoteId = _randomIntFromInterval(0, messages.length - 1)
+  const randomQuoteId = _randomIntFromInterval(0, messages.length - 1);
 
-  console.log('asdfasfdadsf')
   return formatQuote(messages[randomQuoteId]);
 }
 
 function formatQuote(message) {
-  const { nick, quote, date } = message
+  if (message === null) {
+    return;
+  }
+  const { nick, quote, date } = message;
   const formatDate = new Date(date * 1000);
-  const dateToString = `${formatDate.getDate()}/${formatDate.getMonth() + 1}/${formatDate.getFullYear()} ${formatDate.getHours()}:${formatDate.getMinutes()}`
+  const dateToString = `${formatDate.getDate()}/${
+    formatDate.getMonth() + 1
+  }/${formatDate.getFullYear()} ${formatDate.getHours()}:${formatDate.getMinutes()}`;
   return `“${quote}”
   \t\t\t\t\t\t${nick} - ${dateToString}
-  `
+  `;
 }
 
-function _randomIntFromInterval(min, max) { // min and max included 
+function _randomIntFromInterval(min, max) {
+  // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 module.exports = {
   randomQuoteFromUser,
   randomQuote,
-  formatQuote
-}
+  formatQuote,
+};

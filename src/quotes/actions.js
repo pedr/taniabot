@@ -1,11 +1,6 @@
+const { randomQuoteFromUser, randomQuote, formatQuote } = require("./helpers");
 
-const {
-  randomQuoteFromUser,
-  randomQuote,
-  formatQuote
-} = require('./helpers')
-
-const quotesDao = require('../database/quotes')
+const quotesDao = require("../database/quotes");
 
 /*
 const quotes = [
@@ -27,10 +22,10 @@ const quotes = [];
 function saveQuote(msg) {
   const chatId = msg.chat.id;
 
-  const { reply_to_message: reply } = msg
+  const { reply_to_message: reply } = msg;
 
   if (!reply) {
-    return
+    return;
   }
 
   const quote = {
@@ -39,31 +34,38 @@ function saveQuote(msg) {
     quote: reply.text,
     date: reply.date,
     chatId,
-  }
+  };
 
-  quotesDao.save(quote)
+  quotesDao.save(quote);
 }
 
 function getQuote(msg) {
   const chatId = msg.chat.id;
 
-  const { reply_to_message: reply } = msg
+  const [_, ...rest] = msg.text.split(" ");
 
-  const userId = reply ? (reply.from ? reply.from.id : undefined) : undefined
+  let contentToFind = undefined;
+
+  if (rest.length) {
+    contentToFind = rest.join(" ");
+  }
+
+  const { reply_to_message: reply } = msg;
+
+  const userId = reply ? (reply.from ? reply.from.id : undefined) : undefined;
 
   if (userId) {
-    return quotesDao.getRandomFromUser(chatId, userId).then(quote => {
-      return formatQuote(quote)
-    })
+    return quotesDao.getRandomFromUser(chatId, userId, contentToFind).then((quote) => {
+      return formatQuote(quote);
+    });
   }
-  
-  return quotesDao.getRandom(chatId).then(quote => {
-    return formatQuote(quote)
-  })
+
+  return quotesDao.getRandom(chatId, contentToFind).then((quote) => {
+    return formatQuote(quote);
+  });
 }
 
 module.exports = {
   getQuote,
-  saveQuote
-}
-
+  saveQuote,
+};

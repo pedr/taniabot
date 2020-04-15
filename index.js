@@ -1,56 +1,35 @@
+const bot = require("./configs");
 
-const bot = require('./configs');
-
-require('dotenv').config()
+require("dotenv").config();
 
 // const db = require('./database')
 
-const {
-  logMessages,
-  echo,
-  hxh,
-  commands
-} = require('./src/generic')
+const { logMessages, echo, hxh, commands } = require("./src/generic");
 
-const {
-  saveYtbLink,
-  getPlaylist
-} = require('./src/youtube')
+const { saveYtbLink, getPlaylist } = require("./src/youtube");
 
-const {
-  getSynchLink,
-  getSynchLivreLink
-} = require('./src/synch')
+const { getSynchLink, getSynchLivreLink } = require("./src/synch");
 
-const {
-  saveQuote,
-  getQuote
-} = require('./src/quotes')
+const { saveQuote, getQuote } = require("./src/quotes");
 
-const {
-  generateValue,
-  betResult
-} = require('./src/bets')
+const { generateValue, betResult } = require("./src/bets");
 
-const {
-  getImgurImage
-} = require('./src/external-resources')
+const { getImgurImage } = require("./src/external-resources");
 
 function onTextWrapper(textMatch, fn) {
   bot.onText(textMatch, async (...args) => {
     const [msg] = args;
     const chatId = msg.chat.id;
 
-    const response = await fn(...args)
+    const response = await fn(...args);
 
     if (response) {
-      bot.sendMessage(chatId, response)  
+      bot.sendMessage(chatId, response);
     }
-
-  })
+  });
 }
 
-bot.on('message', logMessages);
+bot.on("message", logMessages);
 
 // generic
 onTextWrapper(/\/echo (.+)/, echo);
@@ -62,16 +41,16 @@ onTextWrapper(/\/ytb (.+)/, saveYtbLink);
 onTextWrapper(/\/playlist$/, getPlaylist);
 
 // synch
-onTextWrapper(/\/synch$/, getSynchLink)
-onTextWrapper(/\/synch_livre$/, getSynchLivreLink)
+onTextWrapper(/\/synch$/, getSynchLink);
+onTextWrapper(/\/synch_livre$/, getSynchLivreLink);
 
 // quotes
-onTextWrapper(/\/quote$/, saveQuote)
-onTextWrapper(/\/quotes$/, getQuote)
+onTextWrapper(/\/quote$/, saveQuote);
+onTextWrapper(/\/quotes.*$/, getQuote);
 
 // bets
-onTextWrapper(/\/bet$/, generateValue)
-onTextWrapper(/\/bet_result$/, betResult)
+onTextWrapper(/\/bet$/, generateValue);
+onTextWrapper(/\/bet_result$/, betResult);
 
 // external-resources
-onTextWrapper(/\/meme/, getImgurImage)
+onTextWrapper(/\/meme/, getImgurImage);
