@@ -33,6 +33,7 @@ function saveQuote(msg) {
     nick: reply.from.first_name,
     quote: reply.text,
     date: reply.date,
+    count: 0,
     chatId,
   };
 
@@ -56,11 +57,14 @@ function getQuote(msg) {
 
   if (userId) {
     return quotesDao.getRandomFromUser(chatId, userId, contentToFind).then((quote) => {
+      quotesDao.increaseCount(quote)
       return formatQuote(quote);
     });
   }
 
   return quotesDao.getRandom(chatId, contentToFind).then((quote) => {
+    console.log('quote!!', quote)
+    quotesDao.increaseCount(quote._id, quote)
     return formatQuote(quote);
   });
 }

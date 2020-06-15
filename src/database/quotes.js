@@ -1,4 +1,4 @@
-const { getDb } = require("../../database");
+const { getDb, ObjectID } = require("../../database");
 
 module.exports = {
   save: (quote) => {
@@ -93,4 +93,18 @@ module.exports = {
       });
     });
   },
+
+  increaseCount: (id, quote) => {
+    delete quote._id
+    return getDb().then((db) => {
+      db.collection("quotes")
+        .update({_id: new ObjectID(id)}, { $set: {...quote, count: (quote.count ? quote.count + 1 : 1) }})
+        .then((r) => {
+          console.log(r);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    });
+  }
 };

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const MongoClient = require("mongodb").MongoClient;
+const ObjectID = require("mongodb").ObjectID;
 
 const dbUrl = process.env.DB_URL;
 
@@ -20,5 +21,6 @@ module.exports = {
           reject(err)
         })
     })
-  }
+  },
+  ObjectID: ObjectID
 };
