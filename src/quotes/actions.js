@@ -63,13 +63,32 @@ function getQuote(msg) {
   }
 
   return quotesDao.getRandom(chatId, contentToFind).then((quote) => {
-    console.log('quote!!', quote)
     quotesDao.increaseCount(quote._id, quote)
     return formatQuote(quote);
   });
 }
 
+function rareScores(msg) {
+  const chatId = msg.chat.id;
+
+  return quotesDao.rareScores(chatId).then(rareList => {
+    newRareList = rareList.sort((a, b) => a._id > b._id ? 1 : -1)
+    console.log(formatRares(newRareList))
+    return formatRares(newRareList)
+  })
+}
+
+const formatRares = (rareList) => {
+  return rareList.reduce((response, rare) => {
+    if (rare._id) {
+      return response += `#${rare._id} ======== ${rare.count}\n`
+    }
+    return response += `#0 ======== ${rare.count}\n`;
+  }, `Rare table 1.0\nQuotado / qnt posts\n`)
+}
+
 module.exports = {
   getQuote,
   saveQuote,
+  rareScores,
 };

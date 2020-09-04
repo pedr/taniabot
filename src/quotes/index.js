@@ -1,9 +1,11 @@
 const {
   getQuote,
-  saveQuote
+  saveQuote,
+  rareScores,
 } = require('./actions')
 
 module.exports = {
   getQuote,
-  saveQuote
+  saveQuote,
+  rareScores
 }

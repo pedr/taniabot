@@ -1,6 +1,6 @@
 // all messages
 function logMessages(message) {
-  console.log(message);
+  // console.log(message);
 }
 
 // /echo "whatever"
@@ -34,6 +34,7 @@ function commands() {
     "/quotes",
     "/quotes [msg]",
     "/meme",
+    "/rare"
   ];
   return commands.join("\n");
 }

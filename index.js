@@ -1,5 +1,5 @@
 const bot = require("./configs");
-
+const cron = require("node-cron");
 require("dotenv").config();
 
 // const db = require('./database')
@@ -10,16 +10,24 @@ const { saveYtbLink, getPlaylist } = require("./src/youtube");
 
 const { getSynchLink, getSynchLivreLink } = require("./src/synch");
 
-const { saveQuote, getQuote } = require("./src/quotes");
+const { saveQuote, getQuote, rareScores } = require("./src/quotes");
 
 const { generateValue, betResult } = require("./src/bets");
 
+const { getRandomPhrase } = require("./src/wisdom");
+
 const { getImgurImage } = require("./src/external-resources");
+
+let chatList = [];
 
 function onTextWrapper(textMatch, fn) {
   bot.onText(textMatch, async (...args) => {
     const [msg] = args;
     const chatId = msg.chat.id;
+
+    if (!chatList.includes(chatId)) {
+      chatList.push(chatId)
+    }
 
     const response = await fn(...args);
 
@@ -28,6 +36,32 @@ function onTextWrapper(textMatch, fn) {
     }
   });
 }
+
+cron.schedule("* 8 * * *", () => {
+  for (let chatId of chatList) {
+    getRandomPhrase().then(message => {
+      bot.sendMessage(chatId, message)
+    })
+  }
+})
+
+cron.schedule("20 16 * * *", () => {
+  for (let chatId of chatList) {
+    getRandomPhrase().then(message => {
+      bot.sendMessage(chatId, message)
+    })
+  }
+})
+
+cron.schedule("30 22 * * *", () => {
+  for (let chatId of chatList) {
+    getRandomPhrase().then(message => {
+      bot.sendMessage(chatId, message)
+      bot.sendMessage(chatId, "Boa noite.")
+    })
+  }
+})
+
 
 bot.on("message", logMessages);
 
@@ -47,6 +81,7 @@ onTextWrapper(/\/synch_livre$/, getSynchLivreLink);
 // quotes
 onTextWrapper(/\/quote$/, saveQuote);
 onTextWrapper(/\/quotes.*$/, getQuote);
+onTextWrapper(/\/rare$/, rareScores);
 
 // bets
 onTextWrapper(/\/bet$/, generateValue);

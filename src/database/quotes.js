@@ -106,5 +106,34 @@ module.exports = {
           console.error(err);
         });
     });
+  },
+
+  rareScores: (chatId) => {
+    return getDb().then(db => {
+      return new Promise((resolve, reject) => {
+        const cursor = db.collection("quotes")
+          .aggregate([
+            {
+              $match: {
+                chatId
+              }
+            },
+            {
+              $group: {
+                _id: "$count",
+                count: { $sum: 1 }
+              }
+            }
+          ])
+
+        cursor.toArray((err, doc) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          }
+          resolve(doc);
+        });
+      })
+    });
   }
 };
