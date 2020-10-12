@@ -18,6 +18,8 @@ const { getRandomPhrase } = require("./src/wisdom");
 
 const { getImgurImage } = require("./src/external-resources");
 
+const { pictureOfTheDay } = require('./src/nasa');
+
 let chatList = [];
 
 function onTextWrapper(textMatch, fn) {
@@ -39,31 +41,68 @@ function onTextWrapper(textMatch, fn) {
 
 cron.schedule("* 8 * * *", () => {
   for (let chatId of chatList) {
-    getRandomPhrase().then(message => {
-      bot.sendMessage(chatId, message)
-    })
+    getQuote({ chat: { id: chatId }})
+      .then(msg => bot.sendMessage(chatId, msg))
   }
 })
 
 cron.schedule("20 16 * * *", () => {
   for (let chatId of chatList) {
-    getRandomPhrase().then(message => {
-      bot.sendMessage(chatId, message)
-    })
+    getQuote({ chat: { id: chatId }, text: '' })
+      .then(msg => bot.sendMessage(chatId, msg))
   }
 })
 
-cron.schedule("30 22 * * *", () => {
+cron.schedule("* 22 * * *", () => {
   for (let chatId of chatList) {
-    getRandomPhrase().then(message => {
-      bot.sendMessage(chatId, message)
-      bot.sendMessage(chatId, "Boa noite.")
-    })
+    pictureOfTheDay({ chat: { id: chatId}})
+      .then(msg => bot.sendMessage(chatId, msg))
   }
 })
 
+const options = [
+  { text: 'olá', callback_data: 1 },
+  { text: 'isso é', callback_data: 2 },
+  { text: 'um teste', callback_data: 3 }
+]
+
+const inlineKeyboard = [
+  [
+    options[0]
+  ],
+  [
+    options[1],
+    options[2]
+  ],
+];
+
+bot.onText(/\/tst$/, msg => {
+  const chatId = msg.chat.id;
+
+  console.log(chatId)
+
+  bot.sendMessage(chatId, "olá vc", {
+    parse_mode: "HTML",
+    reply_markup: {
+      inline_keyboard: inlineKeyboard
+    },
+  }).then(r => console.log(r))
+})
 
 bot.on("message", logMessages);
+bot.on("callback_query", (msg) => {
+  console.log(msg)
+  const chatId = msg.message.chat.id
+
+  const choice = msg.data;
+
+  console.log({choice})
+
+  let opt = options.find(e => e.callback_data == choice)
+  console.log(opt)
+
+  bot.sendMessage(chatId, opt.text)
+})
 
 // generic
 onTextWrapper(/\/echo (.+)/, echo);
@@ -89,3 +128,4 @@ onTextWrapper(/\/bet_result$/, betResult);
 
 // external-resources
 onTextWrapper(/\/meme/, getImgurImage);
+onTextWrapper(/\/nasa.*/, pictureOfTheDay);

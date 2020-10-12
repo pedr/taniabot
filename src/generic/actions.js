@@ -34,6 +34,7 @@ function commands() {
     "/quotes",
     "/quotes [msg]",
     "/meme",
+    "/nasa YYYY-mm-dd",
     "/rare"
   ];
   return commands.join("\n");
