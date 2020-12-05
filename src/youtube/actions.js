@@ -20,7 +20,7 @@ function saveYtbLink(msg, match) {
 }
 
 
-function getPlaylist(msg, match) {
+function getPlaylist(msg) {
 
   const chatId = msg.chat.id;
 
