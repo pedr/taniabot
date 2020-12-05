@@ -73,7 +73,6 @@ function rareScores(msg) {
 
   return quotesDao.rareScores(chatId).then(rareList => {
     newRareList = rareList.sort((a, b) => a._id > b._id ? 1 : -1)
-    console.log(formatRares(newRareList))
     return formatRares(newRareList)
   })
 }

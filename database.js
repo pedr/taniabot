@@ -5,7 +5,8 @@ const ObjectID = require("mongodb").ObjectID;
 const dbUrl = process.env.DB_URL;
 
 const client = new MongoClient(dbUrl, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
   .connect()
 

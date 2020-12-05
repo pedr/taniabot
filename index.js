@@ -4,7 +4,6 @@ require("dotenv").config();
 // const db = require('./database')
 
 const { logMessages, echo, hxh, commands } = require("./src/generic");
-
 const { saveYtbLink, getPlaylist } = require("./src/youtube");
 
 const { getSynchLink, getSynchLivreLink } = require("./src/synch");
@@ -13,11 +12,11 @@ const { saveQuote, getQuote, rareScores } = require("./src/quotes");
 
 const { generateValue, betResult } = require("./src/bets");
 
-const { getRandomPhrase } = require("./src/wisdom");
+// const { getRandomPhrase } = require("./src/wisdom");
 
 const { getImgurImage } = require("./src/external-resources");
 
-const { pictureOfTheDay } = require('./src/nasa');
+const { pictureOfTheDay } = require("./src/nasa");
 
 let chatList = [];
 
@@ -27,7 +26,7 @@ function onTextWrapper(textMatch, fn) {
     const chatId = msg.chat.id;
 
     if (!chatList.includes(chatId)) {
-      chatList.push(chatId)
+      chatList.push(chatId);
     }
 
     const response = await fn(...args);
@@ -39,41 +38,41 @@ function onTextWrapper(textMatch, fn) {
 }
 
 bot.on("message", logMessages);
-bot.on("callback_query", (msg) => {
-  console.log(msg)
-  const chatId = msg.message.chat.id
+// bot.on("callback_query", (msg) => {
+//   console.log(msg);
+//   const chatId = msg.message.chat.id;
 
-  const choice = msg.data;
+//   const choice = msg.data;
 
-  console.log({choice})
+//   console.log({ choice });
 
-  let opt = options.find(e => e.callback_data == choice)
-  console.log(opt)
+//   let opt = options.find((e) => e.callback_data == choice);
+//   console.log(opt);
 
-  bot.sendMessage(chatId, opt.text)
-})
+//   bot.sendMessage(chatId, opt.text);
+// });
 
 // generic
 onTextWrapper(/\/echo (.+)/, echo);
-onTextWrapper(/\/hxh$/, hxh);
-onTextWrapper(/\/cmds$/, commands);
+onTextWrapper(/\/hxh.+/, hxh);
+onTextWrapper(/\/cmds/, commands);
 
 // youtube
 onTextWrapper(/\/ytb (.+)/, saveYtbLink);
-onTextWrapper(/\/playlist$/, getPlaylist);
+onTextWrapper(/\/playlist/, getPlaylist);
 
 // synch
-onTextWrapper(/\/synch$/, getSynchLink);
-onTextWrapper(/\/synch_livre$/, getSynchLivreLink);
+onTextWrapper(/(\/synch_livre)+/, getSynchLivreLink);
+onTextWrapper(/(\/synch[^_])/, getSynchLink);
 
 // quotes
-onTextWrapper(/\/quote$/, saveQuote);
+onTextWrapper(/\/quote/, saveQuote);
 onTextWrapper(/\/quotes.*$/, getQuote);
-onTextWrapper(/\/rare$/, rareScores);
+onTextWrapper(/\/rare/, rareScores);
 
 // bets
-onTextWrapper(/\/bet$/, generateValue);
-onTextWrapper(/\/bet_result$/, betResult);
+onTextWrapper(/\/bet/, generateValue);
+onTextWrapper(/\/bet_result/, betResult);
 
 // external-resources
 onTextWrapper(/\/meme/, getImgurImage);
