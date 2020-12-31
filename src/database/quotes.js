@@ -106,6 +106,31 @@ module.exports = {
     });
   },
 
+  updateRating: (id, value, voter) => {
+    return getDb().then((db) => {
+      db.collection("quotes")
+        .updateOne(
+          { _id: new ObjectID(id) },
+          { 
+            $inc: { rating: value },
+            $push: {
+              voteList: {
+                voter: voter,
+                date: new Date(),
+                value: value
+              } 
+            } 
+          },
+        )
+        .then((r) => {
+          return r;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    });
+  },
+
   rareScores: (chatId) => {
     return getDb().then(db => {
       return new Promise((resolve, reject) => {

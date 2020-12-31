@@ -58,13 +58,14 @@ function getQuote(msg) {
   if (userId) {
     return quotesDao.getRandomFromUser(chatId, userId, contentToFind).then((quote) => {
       quotesDao.increaseCount(quote)
-      return formatQuote(quote);
+      return { quote: formatQuote(quote), id: quote._id, userId: quote.user };
     });
   }
 
   return quotesDao.getRandom(chatId, contentToFind).then((quote) => {
+    let quoteId = quote._id;
     quotesDao.increaseCount(quote._id, quote)
-    return formatQuote(quote);
+    return { quote: formatQuote(quote), id: quoteId, userId: quote.user };
   });
 }
 
@@ -86,8 +87,15 @@ const formatRares = (rareList) => {
   }, `Rare table 1.0\nQuotado / qnt posts\n`)
 }
 
+const updateRating = (quoteId, value, voterId) => {
+  return quotesDao.updateRating(quoteId, value, voterId).then(r => {
+    console.log('updatedRating', JSON.stringify(r));
+  }).catch(err => console.error(err))
+}
+
 module.exports = {
   getQuote,
   saveQuote,
   rareScores,
+  updateRating,
 };

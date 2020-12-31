@@ -8,7 +8,7 @@ const { saveYtbLink, getPlaylist } = require("./src/youtube");
 
 const { getSynchLink, getSynchLivreLink } = require("./src/synch");
 
-const { saveQuote, getQuote, rareScores } = require("./src/quotes");
+const { saveQuote, getQuote, rareScores, updateRating } = require("./src/quotes");
 
 const { generateValue, betResult } = require("./src/bets");
 
@@ -38,19 +38,54 @@ function onTextWrapper(textMatch, fn) {
 }
 
 bot.on("message", logMessages);
-// bot.on("callback_query", (msg) => {
-//   console.log(msg);
-//   const chatId = msg.message.chat.id;
+bot.on("callback_query", async (msg) => {
+  console.log(msg);
 
-//   const choice = msg.data;
+  const choice = msg.data;
 
-//   console.log({ choice });
+  const parsed = JSON.parse(choice);
+  console.log({parsed})
 
-//   let opt = options.find((e) => e.callback_data == choice);
-//   console.log(opt);
+  switch (parsed.t) {
+    case "rtg":
+      await updateRating(parsed.quoteId, parsed.v, msg.from.id);
+      break;
+    default:
+      break;
+  }
+  bot.sendMessage(chatId, "batblz")
+});
 
-//   bot.sendMessage(chatId, opt.text);
-// });
+
+bot.onText(/\/quotes.*$/, async (msg) => {
+  console.log('aq')
+  const chatId = msg.chat.id;
+
+  if (!chatList.includes(chatId)) {
+    chatList.push(chatId);
+  }
+
+  const response = await getQuote(msg);
+
+  if (response && response.quote && response.id) {
+    bot.sendMessage(chatId, response.quote, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { 
+              text: '👍',
+              callback_data: JSON.stringify({ v: 1, quoteId: response.id, t: "rtg" })
+            },
+            { 
+              text: '👎',
+              callback_data: JSON.stringify({ v: -1, quoteId: response.id, t: 'rtg' })
+            }
+          ]
+        ]
+      }
+    });
+  }
+});
 
 // generic
 onTextWrapper(/\/echo (.+)/, echo);
@@ -67,7 +102,7 @@ onTextWrapper(/(\/synch[^_])/, getSynchLink);
 
 // quotes
 onTextWrapper(/\/quote/, saveQuote);
-onTextWrapper(/\/quotes.*$/, getQuote);
+// onTextWrapper(/\/quotes.*$/, getQuote);
 onTextWrapper(/\/rare/, rareScores);
 
 // bets

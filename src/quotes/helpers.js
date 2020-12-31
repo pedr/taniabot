@@ -20,13 +20,14 @@ function formatQuote(message) {
   if (message === null) {
     return;
   }
-  const { nick, quote, date, count } = message;
+  const { nick, quote, date, count, rating } = message;
   const formatDate = new Date(date * 1000);
   const dateToString = `${formatDate.getDate()}/${
     formatDate.getMonth() + 1
   }/${formatDate.getFullYear()} ${formatDate.getHours()}:${formatDate.getMinutes()}`;
+  const ratingStr = rating != undefined && rating != 0 ? rating > 0 ? `👍 ${rating}` : `👎 ${rating}` : "" ; 
   return `“${quote}”
-  \t\t\t\t\t\t${nick} - ${dateToString} - rarescale : ${count ? count : 0}
+  \t\t\t\t\t\t${nick} - ${dateToString} - rarescale : ${count ? count : 0} - ${ratingStr ? ratingStr : "vote em mim"}
   `;
 }
 
