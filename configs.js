@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 
 let bot = new TelegramBot(token)
-bot.setWebHook(`${externalUrl}/bot${token}`);
+bot.setWebHook(`${externalUrl}bot${token}`);
 
 app.post(`/bot${token}`, (req, res) => {
     console.log('alo algo aconteceu')
@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 })
 
 app.listen(port, () => {
+    console.log('telegram webhook: ' + `${externalUrl}/bot${token}`)
     console.log(`server rodando na porta ${port}`);
 })
 
