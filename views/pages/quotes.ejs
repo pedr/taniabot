@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotes do chat</title>
+  <style>
+    body {
+      background-color: brown;
+      padding: 16px;
+    }
+    .card {
+      background-color: bisque;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <% quotes.map(function(quote){ %>
+    <div class="card">
+      <p>"<%= quote.quote %>"</p>
+      <p>Autor: <%= quote.nick %>
+        updoots: <%= quote.rating ? quote.rating : 0%>
+      </p>
+      <p>Quando: <%= quote.date %></p>
+    </div>
+  <% }); %>
+</body>
+</html>

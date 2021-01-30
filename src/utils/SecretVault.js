@@ -20,7 +20,7 @@ const SecretVault = () => {
         if (index > -1) {
           vals.splice(index, 1);
         }
-        return { status: true, secret: secret }
+        return { status: true, secret: found }
       
       } else {
         return { status: false, secret: null }

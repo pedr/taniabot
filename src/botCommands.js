@@ -68,9 +68,9 @@ const botCommands = (bot, vault) => {
 
   // secret
 
-  simpleTextMatchWrapper(/\/secret/, () => {
-    const secret = vault.generateNew();
-    return `https://f71e38814061.ngrok.io/page/${secret}`
+  simpleTextMatchWrapper(/\/secret/, (msg) => {
+    const secret = vault.generateNew({ chatId: msg.chat.id });
+    return `Esse link só vai funcionar uma vez, para gerar outro rode o comando /secret novamente, ${process.env.EXTERNAL_URL}page/${secret}`
   }, { disable_web_page_preview: true})
 }
 

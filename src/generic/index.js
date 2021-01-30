@@ -35,6 +35,7 @@ function commands() {
     "/meme",
     "/nasa YYYY-mm-dd",
     "/rare",
+    "/secret/ =>>> mostra todos os quotes, link só funciona uma vez"
   ];
   return commands.join("\n");
 }

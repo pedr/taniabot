@@ -1,5 +1,6 @@
 
 const token = process.env.TOKEN;
+const {getAllFromChat} = require("./database/quotes");
 
 const routes = (app, bot, vault) => {
   
@@ -13,20 +14,27 @@ const routes = (app, bot, vault) => {
     res.send("<p>hello world</p>");
   })
 
-  app.get("/page/:secret", (req, res) => {
+  app.get("/page/:secret", async (req, res) => {
     const paramSecret = req.params.secret;
 
-    console.log({paramSecret})
     if (paramSecret) {
       const { status, secret } = vault.check(paramSecret);
-      console.log({status})
+
       if (status) {
-        return res.send(`<p>liberado ${secret}</p>`);
+        const allMsgs = await getAllFromChat(secret.chatId);
+        const dataToHuman = n => {
+          const d = new Date(n * 1000);
+          var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+          return d.toLocaleDateString('pt-br', options);
+        }
+
+        return res.render("pages/quotes", { quotes: allMsgs.map(e => ({...e, date: dataToHuman(e.date)}))});
       }
     } 
     res.status(403);
     res.send("<p>get out</p>")
   })
+
 }
 
 module.exports = routes;
