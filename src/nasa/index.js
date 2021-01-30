@@ -23,7 +23,7 @@ async function pictureOfTheDay(msg) {
   const { data } = await getImage(dateToFind);
 
   if (data) {
-    return `${data.url} - ${data.explanation}${data.hdurl ? `\n - Imagem em HD: ${data.hdurl}` : ""}`;
+    return data.url;
   }
 }
 

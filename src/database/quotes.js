@@ -1,4 +1,4 @@
-const { getDb, ObjectID } = require("../../database");
+const { getDb, ObjectID } = require("../database");
 
 module.exports = {
   save: (quote) => {
