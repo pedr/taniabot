@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 const host = process.env.HOST || '0.0.0.0';
 const externalUrl = process.env.EXTERNAL_URL || "https://60dd4f94cd7c.ngrok.io";
 
-if (process.env.stage != "DEV") {
+if (process.env.stage == "DEV") {
     throw "ARRUMA O EXTERNALURL"
 }
 
