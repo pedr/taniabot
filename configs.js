@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 
 let bot = new TelegramBot(token)
-bot.setWebHook(`${externalUrl}:443/bot${token}`);
+bot.setWebHook(`${externalUrl}/bot${token}`);
 
 app.post(`/bot${token}`, (req, res) => {
     console.log('alo algo aconteceu')
