@@ -1,6 +1,7 @@
 
 const token = process.env.TOKEN;
 const {getAllFromChat} = require("./database/quotes");
+const path = require('path');
 
 const routes = (app, bot, vault) => {
   

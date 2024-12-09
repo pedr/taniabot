@@ -4,7 +4,7 @@ module.exports = {
   save: (quote) => {
     return getDb().then((db) => {
       db.collection("quotes")
-        .insert(quote)
+        .insertOne(quote)
         .then((r) => {
         })
         .catch((err) => {
@@ -42,13 +42,12 @@ module.exports = {
           },
         ]);
 
-        cursor.each((err, doc) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          }
-          resolve(doc);
-        });
+	      cursor.next().then(doc => {
+		     resolve(doc);
+	      }).catch(err => {
+		      console.error(err);
+		      reject(err);
+	      });
       });
     });
   },

@@ -1,4 +1,6 @@
-require("dotenv").config();
+require("dotenv").config({ path: __dirname + "/.env" });
+
+console.log(process.env.DB_URL);
 
 const { app, bot } = require("./src/configs");
 const routes = require("./src/routes");
