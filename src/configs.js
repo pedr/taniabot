@@ -15,11 +15,22 @@ app.use(express.json());
 app.set('views', path.join(__dirname, '..', 'views'));
 app.set('view engine', 'ejs');
 
-let bot = new TelegramBot(token);
-bot.setWebHook(`${externalUrl}bot${token}`);
+let polling = true;
+if (externalUrl !== '' && externalUrl.startsWith('https')) {
+  polling = false;
+} 
+
+let bot = new TelegramBot(token, { polling });
+if (!polling) {
+  bot.setWebHook(`${externalUrl}bot${token}`);
+}
 
 app.listen(port, () => {
-  console.log("telegram webhook: " + `${externalUrl}bot${token}`);
+  if (polling) {
+    console.log("connecting with polling");
+  } else {
+    console.log("telegram webhook: " + `${externalUrl}bot${token}`);
+  }
   console.log(`server rodando na porta ${port}`);
 });
 
