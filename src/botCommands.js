@@ -9,6 +9,7 @@ const { saveQuote, getQuote, rareScores, updateRating } = require("./quotes");
 const { generateValue, betResult } = require("./bets");
 const { getImgurImage } = require("./external-resources");
 const { pictureOfTheDay } = require("./nasa");
+const { unpromptedQuote } = require("./quotes/actions");
 
 let chatList = [];
 
@@ -16,6 +17,12 @@ const botCommands = (bot, vault) => {
   const simpleTextMatchWrapper = SimpleTextMatchWrapper(chatList, bot);
 
   bot.on("message", logMessages);
+  bot.on("message", async (msg) => {
+    const response = await unpromptedQuote(msg);
+    if (response && response.quote && response.id) {
+      bot.sendMessage(msg.chat.id, response.quote)
+    }
+  });
   bot.on("callback_query", async (msg) => {
     const choice = msg.data;
   

@@ -2,6 +2,14 @@ const { randomQuoteFromUser, randomQuote, formatQuote } = require("./helpers");
 
 const quotesDao = require("../database/quotes");
 
+const unpromptedMessagesThresholder = process.env.UNPROMPTED ? parseInt(process.env.UNPROMPTED, 10) : 100;
+
+console.log('Unprompted message thresolder is: ', unpromptedMessagesThresholder)
+
+const unpromptedMessagesCounter = {
+  // [chatId]: messagesCounter
+}
+
 /*
 const quotes = [
   { 
@@ -93,9 +101,46 @@ const updateRating = (quoteId, value, voterId) => {
   }).catch(err => console.error(err))
 }
 
+const unpromptedQuote = async (msg) => {
+  const chatId = msg.chat.id;
+
+  if (!unpromptedMessagesCounter[chatId]) {
+    unpromptedMessagesCounter[chatId] = 1;
+  } else {
+    unpromptedMessagesCounter[chatId] += 1;
+  }
+
+  if (unpromptedMessagesCounter[chatId] < unpromptedMessagesThresholder) {
+    return;
+  }
+
+  unpromptedMessagesCounter[chatId] = 0;
+
+  let contentToFind = msg.text;
+
+  const { reply_to_message: reply } = msg;
+
+  const userId = reply ? (reply.from ? reply.from.id : undefined) : undefined;
+
+  if (userId) {
+    return quotesDao.getRandomFromUser(chatId, userId, contentToFind).then((quote) => {
+      quotesDao.increaseCount(quote)
+      return { quote: formatQuote(quote), id: quote._id, userId: quote.user };
+    });
+  }
+
+  return quotesDao.getRandom(chatId, contentToFind).then((quote) => {
+    let quoteId = quote._id;
+    quotesDao.increaseCount(quote._id, quote)
+    return { quote: formatQuote(quote), id: quoteId, userId: quote.user };
+  });
+}
+
+
 module.exports = {
   getQuote,
   saveQuote,
   rareScores,
   updateRating,
+  unpromptedQuote,
 };
