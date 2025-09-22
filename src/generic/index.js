@@ -9,7 +9,7 @@ function echo(_, match) {
 
 // days since last hxh cap
 function hxh() {
-  const lastHxH = new Date("2018-11-26");
+  const lastHxH = new Date("2024-12-09");
   const today = new Date();
   const milliSinceHxH = today - lastHxH;
   // that is what it takes to calculate on js milli, seconds, min, hours
